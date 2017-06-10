@@ -1,0 +1,4 @@
+For now these are just mostly unorganized notes
+Initial parsing, no trimming except the html formatting
+trimmed: Removed ',' and ' ('
+trimmed2: Removed ',' and ' (' and '—'

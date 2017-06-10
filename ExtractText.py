@@ -59,7 +59,7 @@ def printList(l):
 def classify(line):
     retval = 'unknown'
     if line.find(topIngredient) > -1:
-        return 'toplevelingredient'
+        return 'topLevelIngredient'
     if basic in line:
         if bold in line:
             if ':' in line:
@@ -99,7 +99,15 @@ def strengthCheck(suba):
         return suba,strengths[3]
 
 def parseSubIngredient(line): #strips the p tag, then runs it through the strcheck engine, stripping out formatting as it goes
-    return strengthCheck(parseP(line, basic))
+    r = strengthCheck(parseP(line, basic))
+    #print(r) #r is a tuple of (ingredient,strength) but that ingredient might be stupidly
+    if ',' in r[0]:
+        r = (r[0][0: r[0].find(',')],r[1])
+    if '(' in r[0]:
+        r = (r[0][0: r[0].find('(')].strip(),r[1])
+    if '—' in r[0]:
+        r = (r[0][0: r[0].find('—')].strip(),r[1])
+    return r
 
 def parseAttribute(line): #remove the p tag and the boldness, then split on : to get the type of attribute, value
     return snipOut(parseP(line,basic+bold), ':'+strong)
@@ -118,7 +126,7 @@ if __name__ == '__main__':
             line = line.decode('utf-8')
             #length += len(line)
             lineType = classify(line)
-            if lineType == 'toplevelingredient':
+            if lineType == 'topLevelIngredient':
                 tliCounter += 1
                 if tliCounter%speedFactor == 0:
                     print('Name: ',currentIngredient.name)
@@ -145,8 +153,8 @@ if __name__ == '__main__':
     # for i in ingredients:
     #     print(i.name)
 
-        nx.write_graphml(currentIngredient.graph, "Output\\flavorBibleGraph.xml")
-
+        nx.write_graphml(currentIngredient.graph, "Output\\flavorBibleGraphTrimmed2.xml")
+        print(nx.nodes(currentIngredient.graph))
 # graph = currentIngredient.graph
 # nx2tikz --input ExtractText.py --output out --format pdf
 #print(length)
